@@ -5,5 +5,5 @@ public class CategoryYS
     public int Id { get; set; }
     public string Name { get; set; }
 
-    public IList<TutorialYS> TutorialYses { get; set; } = new List<TutorialYS>();
+    public IList<TutorialYS> TutorialsYs { get; set; } = new List<TutorialYS>();
 }
