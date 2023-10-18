@@ -31,6 +31,8 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 // Dependency Injection Configuration
 builder.Services.AddScoped<ICategoryYSRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryYSService, CategoryService>();
+builder.Services.AddScoped<ITutorialYSRepository, TutorialRepository>();
+builder.Services.AddScoped<ITutorialYSService, TutorialService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // AutoMapper Configuration
