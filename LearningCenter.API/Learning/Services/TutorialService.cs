@@ -18,28 +18,100 @@ public class TutorialService : ITutorialYSService
         _categoryYsRepository = categoryYsRepository;
     }
 
-    public Task<IEnumerable<TutorialYS>> ListAsync()
+    public async Task<IEnumerable<TutorialYS>> ListAsync()
     {
-        throw new NotImplementedException();
+        return await _tutorialYsRepository.ListAsync();
     }
 
-    public Task<IEnumerable<TutorialYS>> ListByCategoryIdAsync(int categoryId)
+    public async Task<IEnumerable<TutorialYS>> ListByCategoryIdAsync(int categoryId)
     {
-        throw new NotImplementedException();
+        return await _tutorialYsRepository.FindByCategoryIdAsync(categoryId);
     }
 
-    public Task<TutorialYSResponse> SaveAsync(TutorialYS tutorialYs)
+    public async Task<TutorialYSResponse> SaveAsync(TutorialYS tutorialYs)
     {
-        throw new NotImplementedException();
+        // Validate CategoryId
+        var existingCategory = await _categoryYsRepository.FindByIdAsync(tutorialYs.CategoryId);
+        if (existingCategory == null)
+            return new TutorialYSResponse("Invalid Category");
+        
+        // Validate Title
+        var existingTutorialWithTitle = await _tutorialYsRepository.FindByTitleAsync(tutorialYs.Title);
+        if (existingTutorialWithTitle != null)
+            return new TutorialYSResponse("Tutorial title already exists.");
+        
+        try
+        {
+            // Add Tutorial
+            await _tutorialYsRepository.AddAsync(tutorialYs);
+            // Complete Transaction
+            await _unitOfWork.CompleteAsync();
+            // Return response
+            return new TutorialYSResponse(tutorialYs);
+        }
+        catch (Exception e)
+        {
+            // Error Handling
+            return new TutorialYSResponse($"An error occurred while saving the tutorial: {e.Message}");
+        }
     }
 
-    public Task<TutorialYSResponse> UpdateAsync(int tutorialId, TutorialYS tutorialYs)
+    public async Task<TutorialYSResponse> UpdateAsync(int tutorialId, TutorialYS tutorialYs)
     {
-        throw new NotImplementedException();
+        var existingTutorial = await 
+            _tutorialYsRepository.FindByIdAsync(tutorialId);
+ 
+        // Validate Tutorial
+        if (existingTutorial == null)
+            return new TutorialYSResponse("Tutorial not found.");
+        // Validate CategoryId
+        var existingCategory = await 
+            _categoryYsRepository.FindByIdAsync(tutorialYs.CategoryId);
+        if (existingCategory == null)
+            return new TutorialYSResponse("Invalid Category");
+        // Validate Title
+        var existingTutorialWithTitle = await 
+            _tutorialYsRepository.FindByTitleAsync(tutorialYs.Title);
+        if (existingTutorialWithTitle != null && 
+            existingTutorialWithTitle.Id != existingTutorial.Id)
+            return new TutorialYSResponse("Tutorial title already exists.");
+ 
+        // Modify Fields
+        existingTutorial.Title = tutorialYs.Title;
+        existingTutorial.Description = tutorialYs.Description;
+        try
+        {
+           _tutorialYsRepository.Update(existingTutorial);
+            await _unitOfWork.CompleteAsync();
+            return new TutorialYSResponse(existingTutorial);
+        }
+        catch (Exception e)
+        {
+            // Error Handling
+            return new TutorialYSResponse($"An error occurred while updating the tutorial: {e.Message}");
+        }
     }
 
-    public Task<TutorialYSResponse> DeleteAsync(int tutorialId)
+    public async Task<TutorialYSResponse> DeleteAsync(int tutorialId)
     {
-        throw new NotImplementedException();
+        var existingTutorial = await 
+            _tutorialYsRepository.FindByIdAsync(tutorialId);
+ 
+        // Validate Tutorial
+        if (existingTutorial == null)
+            return new TutorialYSResponse("Tutorial not found.");
+ 
+        try
+        {
+           _tutorialYsRepository.Remove(existingTutorial);
+            await _unitOfWork.CompleteAsync();
+            return new TutorialYSResponse(existingTutorial);
+ 
+        }
+        catch (Exception e)
+        {
+            // Error Handling
+            return new TutorialYSResponse($"An error occurred while deleting the tutorial: {e.Message}");
+        }
     }
 }
