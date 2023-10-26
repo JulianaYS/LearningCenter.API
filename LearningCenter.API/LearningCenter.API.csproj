@@ -23,7 +23,6 @@
       <Folder Include="Security\Exceptions\" />
       <Folder Include="Security\Mapping\" />
       <Folder Include="Security\Persistence\" />
-      <Folder Include="Security\Resources\" />
       <Folder Include="Security\Services\" />
     </ItemGroup>
 
