@@ -1,4 +1,5 @@
 ﻿using LearningCenter.API.Learning.Domain.Models;
+using LearningCenter.API.Security.Domain.Models;
 using LearningCenter.API.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -13,6 +14,7 @@ public class AppDbContext : DbContext
 
     public DbSet<CategoryYS> Categories { get; set; }
     public DbSet<TutorialYS> Tutorials { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -23,6 +25,7 @@ public class AppDbContext : DbContext
         builder.Entity<CategoryYS>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<CategoryYS>().Property(p => p.Name).IsRequired().HasMaxLength(30);
         
+        //Relationships
         builder.Entity<CategoryYS>()
             .HasMany(p => p.TutorialsYs)
             .WithOne(p => p.CategoryYs)
@@ -34,9 +37,17 @@ public class AppDbContext : DbContext
         builder.Entity<TutorialYS>().Property(p => p.Title).IsRequired().HasMaxLength(50);
         builder.Entity<TutorialYS>().Property(p => p.Description).HasMaxLength(120);
  
+        //User
+        // Constraints
+        builder.Entity<User>().ToTable("Users");
+        builder.Entity<User>().HasKey(p => p.Id);
+        builder.Entity<User>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<User>().Property(p => p.Username).IsRequired().HasMaxLength(30);
+        builder.Entity<User>().Property(p => p.FirstName).IsRequired();
+        builder.Entity<User>().Property(p => p.LastName).IsRequired();
  
+        
         // Apply Snake Case Naming Convention
-
         builder.UseSnakeCaseNamingConvention();
         
     }
