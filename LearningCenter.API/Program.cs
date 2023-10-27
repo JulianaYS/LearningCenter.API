@@ -1,8 +1,11 @@
 using LearningCenter.API.Learning.Domain.Repositories;
 using LearningCenter.API.Learning.Domain.Services;
-using LearningCenter.API.Learning.Mapping;
 using LearningCenter.API.Learning.Persistence.Repositories;
 using LearningCenter.API.Learning.Services;
+using LearningCenter.API.Security.Domain.Repositories;
+using LearningCenter.API.Security.Domain.Services;
+using LearningCenter.API.Security.Persistence.Repositories;
+using LearningCenter.API.Security.Services;
 using LearningCenter.API.Shared.Persistence.Contexts;
 using LearningCenter.API.Shared.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -33,12 +36,24 @@ builder.Services.AddScoped<ICategoryYSRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryYSService, CategoryService>();
 builder.Services.AddScoped<ITutorialYSRepository, TutorialRepository>();
 builder.Services.AddScoped<ITutorialYSService, TutorialService>();
+
+// Shared Injection Configuration
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Security Injection Configuration
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(
-    typeof(ModelToResourceProfile), 
-    typeof(ResourceToModelProfile));
+    typeof(LearningCenter.API.Learning.Mapping.ModelToResourceProfile), 
+ 
+    typeof(LearningCenter.API.Security.Mapping.ModelToResourceProfile),
+ 
+    typeof(LearningCenter.API.Learning.Mapping.ResourceToModelProfile),
+ 
+    typeof(LearningCenter.API.Security.Mapping.ResourceToModelProfile));
 
 var app = builder.Build();
 
